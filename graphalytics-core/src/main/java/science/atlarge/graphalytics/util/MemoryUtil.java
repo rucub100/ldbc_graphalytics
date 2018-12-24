@@ -22,11 +22,11 @@ package science.atlarge.graphalytics.util;
  * See: org.apache.giraph.utils.MemoryUtils
  *
  * @author Wing Lung Ngai
+ * @author Ruslan Curbanov, ruslan.curbanov@uni-duesseldorf.de, December 23, 2018
  */
 public class MemoryUtil {
 
     public static String getMemoryStats() {
-
         double freeMemoryMB = megaBytes(Runtime.getRuntime().freeMemory());
         double totalMemoryMB = megaBytes(Runtime.getRuntime().totalMemory());
         double maxMemoryMB = megaBytes(Runtime.getRuntime().maxMemory());
@@ -40,8 +40,7 @@ public class MemoryUtil {
     }
 
     public static long getMaxMemoryMB() {
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        return Math.round(maxMemory / 1024.0 / 1024.0);
+        return Math.round(megaBytes(Runtime.getRuntime().maxMemory()));
     }
 }
 

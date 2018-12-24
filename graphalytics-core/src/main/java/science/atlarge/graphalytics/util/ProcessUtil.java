@@ -39,6 +39,7 @@ import static java.nio.file.Paths.get;
 
 /**
  * @author Wing Lung Ngai
+ * @author Ruslan Curbanov, ruslan.curbanov@uni-duesseldorf.de, December 23, 2018
  */
 public class ProcessUtil {
 
@@ -55,6 +56,7 @@ public class ProcessUtil {
 
             List<String> command = new ArrayList<>();
             command.add(jvm);
+            command.addAll(getJavaOptions());
             command.add("-Xmx"+ setMaxMemory());
             command.add(mainClass.getCanonicalName());
             command.addAll(args);
@@ -190,5 +192,59 @@ public class ProcessUtil {
         }
     }
 
+    private static List<String> getJavaOptions() {
+        List<String> javaOpts = new ArrayList<String>();
 
+        String BENCHMARK_PROPERTIES_FILE = "benchmark.properties";
+
+        String XX_USE_MEMBAR_KEY = "benchmark.runner.xx-use-membar";
+        String LOG4J_CONFIG_FILE_KEY = "benchmark.runner.log4j.configuration.file";
+
+
+        try {
+            Configuration benchmarkConfiguration = ConfigurationUtil.loadConfiguration(BENCHMARK_PROPERTIES_FILE);
+
+            try {
+                boolean xxusemembar = ConfigurationUtil.getBoolean(benchmarkConfiguration, XX_USE_MEMBAR_KEY);
+
+                if (xxusemembar) {
+                    javaOpts.add("-XX:+UseMembar");
+                }
+            } catch (Exception e) {
+                LOG.warn(e.getMessage());
+                javaOpts.add("-XX:+UseMembar");
+            }
+
+            try {
+                String log4jConfigFile = ConfigurationUtil.getString(benchmarkConfiguration, LOG4J_CONFIG_FILE_KEY);
+                javaOpts.add(String.format("-Dlog4j.configurationFile=%s", log4jConfigFile));
+            } catch (Exception e) {
+                LOG.warn(e.getMessage());
+                javaOpts.add("-Dlog4j.configurationFile=config/log4j2.xml");
+            }
+
+            // TODO: remove this
+            javaOpts.add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:1044");
+
+            // TODO: resolve hard coded solution
+            javaOpts.add("-Ddxram.config=config/dxram.json");
+            javaOpts.add("-Ddxram.m_engineConfig.m_address.m_ip=127.0.0.1");
+            javaOpts.add("-Ddxram.m_engineConfig.m_address.m_port=22222");
+            javaOpts.add("-Ddxram.m_engineConfig.m_role=Peer");
+            //javaOpts.add("-Ddxram.m_componentConfigs[ZookeeperBootComponent].m_connection.m_ip=127.0.0.1");
+            //javaOpts.add("-Ddxram.m_componentConfigs[ZookeeperBootComponent].m_connection.m_port=2181");
+            javaOpts.add("-Ddxram.m_componentConfigs[BackupComponent].m_backupActive=false");
+            javaOpts.add("-Ddxram.m_componentConfigs[BackupComponent].m_availableForBackup=false");
+            //javaOpts.add("-Ddxram.m_componentConfigs[NetworkComponent].m_coreConfig.m_device=ethernet");
+            //javaOpts.add("-Ddxram.m_componentConfigs[NetworkComponent].m_coreConfig.m_numMessageHandlerThreads=2");
+            javaOpts.add("-Ddxram.m_serviceConfigs[MasterSlaveComputeServiceConfig].m_role=none");
+            //javaOpts.add("-Ddxram.m_componentConfigs[ChunkComponent].m_keyValueStoreSize.m_value=256");
+            //javaOpts.add("-Ddxram.m_componentConfigs[ChunkComponent].m_keyValueStoreSize.m_unit=mb");
+            javaOpts.add("-Ddxramdeployscript");
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+
+        return javaOpts;
+    }
 }
