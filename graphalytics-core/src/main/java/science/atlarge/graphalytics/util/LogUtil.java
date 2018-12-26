@@ -51,8 +51,21 @@ public class LogUtil {
     public static void appendSimplifiedConsoleLogger(Level level) {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
-        Layout layout = PatternLayout.createLayout("%msg%n", null, config, null, null, true, false, null, null);
-        Appender appender = ConsoleAppender.createAppender(layout, null, ConsoleAppender.Target.SYSTEM_OUT, "stdout", true, true);
+        Layout<?> layout = PatternLayout
+                .newBuilder()
+                .withPattern("%msg%n")
+                .withConfiguration(config)
+                .withAlwaysWriteExceptions(true)
+                .withNoConsoleNoAnsi(false)
+                .build();
+        Appender appender = ConsoleAppender
+                .newBuilder()
+                .withLayout(layout)
+                .setTarget(ConsoleAppender.Target.SYSTEM_OUT)
+                .withName("stdout")
+                .withIgnoreExceptions(true)
+                .setFollow(true)
+                .build();
         appender.start();
 
         config.getRootLogger().addAppender(appender, level, null);
@@ -62,8 +75,21 @@ public class LogUtil {
     public static void appendConsoleLogger(Level level) {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
-        Layout layout = PatternLayout.createLayout("%highlight{%d{HH:mm} [%-5p] %msg%n}{STYLE=Logback}", null, config, null, null, true, true, null, null);
-        Appender appender = ConsoleAppender.createAppender(layout, null, ConsoleAppender.Target.SYSTEM_OUT, "stdout", true, true);
+        Layout<?> layout = PatternLayout
+                .newBuilder()
+                .withPattern("%highlight{%d{HH:mm} [%-5p] %msg%n}{STYLE=Logback}")
+                .withConfiguration(config)
+                .withAlwaysWriteExceptions(true)
+                .withNoConsoleNoAnsi(true)
+                .build();
+        Appender appender = ConsoleAppender
+                .newBuilder()
+                .withName("stdout")
+                .withLayout(layout)
+                .setTarget(ConsoleAppender.Target.SYSTEM_OUT)
+                .withIgnoreExceptions(true)
+                .setFollow(true)
+                .build();
         appender.start();
 
         config.getRootLogger().addAppender(appender, level, null);
@@ -73,10 +99,27 @@ public class LogUtil {
     public static void appendFileLogger(Level level, String name, Path filePath) {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
-        Layout layout = PatternLayout.createLayout("%d{HH:mm} [%-5p] %msg%n", null, config, null, null, true, false, null, null);
-
-        Appender appender = FileAppender.createAppender(filePath.toFile().getAbsolutePath(), "true", "false", name, "true",
-                "false", "false", "8192", layout, null, "false", null, config);
+        Layout<?> layout = PatternLayout
+                .newBuilder()
+                .withPattern("%d{HH:mm} [%-5p] %msg%n")
+                .withConfiguration(config)
+                .withAlwaysWriteExceptions(true)
+                .withNoConsoleNoAnsi(false)
+                .build();
+        Appender appender = FileAppender
+                .newBuilder()
+                .withAdvertise(false)
+                .withAppend(true)
+                .withBufferedIo(false)
+                .withBufferSize(8192)
+                .setConfiguration(config)
+                .withFileName(filePath.toFile().getAbsolutePath())
+                .withIgnoreExceptions(false)
+                .withImmediateFlush(true)
+                .withLayout(layout)
+                .withLocking(false)
+                .withName(name)
+                .build();
         appender.start();
 
         config.getRootLogger().addAppender(appender, level, null);
