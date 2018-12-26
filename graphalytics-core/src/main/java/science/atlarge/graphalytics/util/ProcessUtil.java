@@ -224,22 +224,22 @@ public class ProcessUtil {
             }
 
             // TODO: remove this
-            javaOpts.add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:1044");
+            //javaOpts.add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:1044");
 
             // TODO: resolve hard coded solution
             javaOpts.add("-Ddxram.config=config/dxram.json");
-            javaOpts.add("-Ddxram.m_engineConfig.m_address.m_ip=127.0.0.1");
-            javaOpts.add("-Ddxram.m_engineConfig.m_address.m_port=22222");
+            javaOpts.add("-Ddxram.m_engineConfig.m_address.m_ip=10.0.0.72");
+            javaOpts.add("-Ddxram.m_engineConfig.m_address.m_port=22224");
             javaOpts.add("-Ddxram.m_engineConfig.m_role=Peer");
-            //javaOpts.add("-Ddxram.m_componentConfigs[ZookeeperBootComponent].m_connection.m_ip=127.0.0.1");
-            //javaOpts.add("-Ddxram.m_componentConfigs[ZookeeperBootComponent].m_connection.m_port=2181");
+            javaOpts.add("-Ddxram.m_componentConfigs[ZookeeperBootComponent].m_connection.m_ip=10.0.0.69");
+            javaOpts.add("-Ddxram.m_componentConfigs[ZookeeperBootComponent].m_connection.m_port=2181");
             javaOpts.add("-Ddxram.m_componentConfigs[BackupComponent].m_backupActive=false");
             javaOpts.add("-Ddxram.m_componentConfigs[BackupComponent].m_availableForBackup=false");
-            //javaOpts.add("-Ddxram.m_componentConfigs[NetworkComponent].m_coreConfig.m_device=ethernet");
-            //javaOpts.add("-Ddxram.m_componentConfigs[NetworkComponent].m_coreConfig.m_numMessageHandlerThreads=2");
+            javaOpts.add("-Ddxram.m_componentConfigs[NetworkComponent].m_coreConfig.m_device=ethernet");
+            javaOpts.add("-Ddxram.m_componentConfigs[NetworkComponent].m_coreConfig.m_numMessageHandlerThreads=2");
             javaOpts.add("-Ddxram.m_serviceConfigs[MasterSlaveComputeServiceConfig].m_role=none");
-            //javaOpts.add("-Ddxram.m_componentConfigs[ChunkComponent].m_keyValueStoreSize.m_value=256");
-            //javaOpts.add("-Ddxram.m_componentConfigs[ChunkComponent].m_keyValueStoreSize.m_unit=mb");
+            javaOpts.add("-Ddxram.m_componentConfigs[ChunkComponent].m_keyValueStoreSize.m_value=256");
+            javaOpts.add("-Ddxram.m_componentConfigs[ChunkComponent].m_keyValueStoreSize.m_unit=mb");
             javaOpts.add("-Ddxramdeployscript");
         } catch (Exception e) {
             LOG.error(e.getMessage());
