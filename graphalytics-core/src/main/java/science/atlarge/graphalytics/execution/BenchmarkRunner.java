@@ -62,7 +62,6 @@ public class BenchmarkRunner {
 	public static void main(String[] args) throws IOException {
 		// Get an instance of the platform integration code
 
-
 		LogUtil.intializeLoggers();
 		LogUtil.appendSimplifiedConsoleLogger(Level.TRACE);
 		LOG = LogManager.getLogger();
